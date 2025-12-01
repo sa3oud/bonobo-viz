@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html class="dark">
+<head>
+    <title>Rich Crypto Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-8">
+    <div class="max-w-4xl mx-auto">
+        <header class="flex justify-between items-center mb-10">
+            <h1 class="text-4xl font-bold text-emerald-400">Live Asset Tracker</h1>
+            <div id="price-display" class="text-3xl font-mono bg-gray-800 p-4 rounded-xl border border-gray-700">
+                Loading...
+            </div>
+        </header>
+
+        <div class="bg-gray-800 p-6 rounded-2xl shadow-2xl border border-gray-700">
+            <canvas id="priceChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('priceChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'BTC/USD (Simulated)',
+                    data: [],
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: { responsive: true, scales: { y: { grid: { color: '#374151' } } } }
+        });
+
+        const eventSource = new EventSource('/prices?api_key=secret123');
+        eventSource.onmessage = (event) => {
+            const price = parseFloat(event.data);
+            const time = new Date().toLocaleTimeString();
+
+            document.getElementById('price-display').innerText = '$' + price.toLocaleString(undefined, {minimumFractionDigits: 2});
+
+            chart.data.labels.push(time);
+            chart.data.datasets[0].data.push(price);
+            
+            if (chart.data.labels.length > 20) {
+                chart.data.labels.shift();
+                chart.data.datasets[0].data.shift();
+            }
+            chart.update();
+        };
+    </script>
+</body>
+</html>

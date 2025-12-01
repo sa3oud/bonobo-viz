@@ -1,0 +1,10 @@
+# Binaries
+rich-tracker
+server
+*.exe
+
+# OS generated
+.DS_Store
+
+# Local secrets
+.env
