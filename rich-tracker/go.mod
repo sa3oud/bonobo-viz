@@ -1,3 +1,3 @@
-module rich-tracker
+module github.com/sa3oud/bonobo-viz
 
-go 1.26.1
+go 1.21
